@@ -1,0 +1,87 @@
+- hosts: all
+#  gather_facts: True
+  tasks:
+     - name: Update all installed packages to the latest versions
+       community.general.apk:
+         upgrade: true
+     - name: add kernel module for networking stuff
+       ansible.builtin.lineinfile:
+         path: /etc/modules-load.d/k8s.conf
+         line: br_netfilter
+         create: yes
+     - name: Add the br_netfilter module
+       community.general.modprobe:
+         name: 8021q
+         state: present
+     - name: Enable IPv4 traffic forwarding
+       ansible.builtin.copy:
+         content=1
+         dest="/proc/sys/net/ipv4/ip_forward"
+         unsafe_writes=true
+     - name: Update repositories and install k8s packets
+       community.general.apk:
+         name: cni-plugin-flannel,cni-plugins,flannel,flannel-contrib-cni,kubelet,kubeadm,kubectl,containerd,uuidgen,nfs-utils
+         update_cache: true
+     - name: Disable SWAP in fstab since kubernetes can't work with swap enabled
+       ansible.builtin.lineinfile:
+         path: /etc/fstab
+         state: absent
+         regexp: 'swap'
+     - name: Disable SWAP
+       shell: swapoff -a
+     - name: rshared
+       shell: mount --make-rshared /
+     - name: Fix prometheus errors
+       ansible.builtin.lineinfile:
+         path: /etc/local.d/sharemetrics.start
+         line: '{{ item }}'
+         create: yes
+       with_items:
+         - '#!/bin/sh'
+         - 'mount --make-rshared /'
+     - name: Changing perm of "/etc/local.d/sharemetrics.start", adding "+x"
+       file:
+         dest: /etc/local.d/sharemetrics.start
+         mode: a+x
+     - name: Start service local, if not started
+       ansible.builtin.service:
+         name: local
+         enabled: yes
+         state: started
+     - name: add machine_id
+       ansible.builtin.copy:
+         dest: /etc/machine-id
+         content: |
+           {{ 99999 | random | to_uuid }}
+         force: false
+     - name: Start service containerd
+       ansible.builtin.service:
+         name: containerd
+         enabled: yes
+         state: started
+     - name: Start service kubelet
+       ansible.builtin.service:
+         name: kubelet
+         enabled: yes
+         state: started
+#     - name: Fix flannel
+#       ansible.builtin.file:
+#         src: /usr/libexec/cni/flannel-amd64
+#         dest: /usr/libexec/cni/flannel
+#         owner: root
+#         group: root
+#         state: link
+     - name: kernell
+       ansible.builtin.lineinfile:
+         path: /etc/sysctl.conf
+         line: net.bridge.bridge-nf-call-iptables=1
+         create: yes
+     - name: sysctl
+       ansible.posix.sysctl:
+         name: net.bridge.bridge-nf-call-iptables
+         value: '1'
+         sysctl_set: true
+     - name: Pin your versions!  If you update and the nodes get out of sync, it implodes.
+       community.general.apk:
+         name: kubelet=~1.26,kubeadm=~1.26,kubectl=~1.26
+         update_cache: true

@@ -1,0 +1,8 @@
+all:
+  vars:
+    anasible_ssh_user: root
+    ansible_connection: ssh
+    cache: True
+  hosts:
+     172.16.25.30:
+     172.16.25.31:
