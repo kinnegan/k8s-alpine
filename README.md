@@ -11,6 +11,7 @@ Worker node: use kubeadm join comand
 using HELM for installing Ingress Controller (https://kubernetes.github.io/ingress-nginx/deploy/#quick-start)
 helm upgrade --install ingress-nginx ingress-nginx   --repo https://kubernetes.github.io/ingress-nginx   --namespace ingress-nginx --create-namespace
 if we using claster inside LAN for testing purpose we need to change EXTERNAL_IP:
+
 kubectl edit service ingress-nginx-controller --namespace=ingress-nginx
 spec:
   externalIPs:
