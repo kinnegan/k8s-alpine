@@ -15,4 +15,4 @@ kubectl edit service ingress-nginx-controller --namespace=ingress-nginx
 spec:
   externalIPs:
   - <eth0 IP>
-after configuring Ingress Controller we can use INgres for exposing resourses (dasbord, application etc) - just need create kind: Ingress resourse, for example dashboard-ingress.yaml
+after configuring Ingress Controller we can use INgres for exposing resourses (dasbord, application etc) - just need create kind: Ingress resourse, for example - use dashboard-ingress.yaml
