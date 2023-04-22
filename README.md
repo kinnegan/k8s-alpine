@@ -12,9 +12,10 @@ using HELM for installing Ingress Controller (https://kubernetes.github.io/ingre
 helm upgrade --install ingress-nginx ingress-nginx   --repo https://kubernetes.github.io/ingress-nginx   --namespace ingress-nginx --create-namespace
 if we using claster inside LAN for testing purpose we need to change EXTERNAL_IP:
  - kubectl edit service ingress-nginx-controller --namespace=ingress-nginx
-spec:
+{spec:
   externalIPs:
   - <eth0 IP>
+}
 after configuring Ingress Controller we can use INgres for exposing resourses (dasbord, application etc) - just need create kind: Ingress resourse, for example dashboard-ingress.yaml
 
 
