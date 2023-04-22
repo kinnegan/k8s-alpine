@@ -15,5 +15,6 @@ if we using claster inside LAN for testing purpose we need to change EXTERNAL_IP
 spec:
   externalIPs:
   - <eth0 IP>
+after configuring Ingress Controller we can use INgres for exposing resourses (dasbord, application etc) - just need create kind: Ingress resourse, for example dashboard-ingress.yaml
 
 
