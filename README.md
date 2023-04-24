@@ -1,6 +1,7 @@
 # k8s-alpine
 ansible playbook for installing k8s klaster. based on  https://wiki.alpinelinux.org/wiki/K8s documentations.
-looks like ipw4 forwarding doesn't save after reload, so need to do this: echo net.ipv4.ip_forward=1 | tee -a /etc/sysctl.conf && sysctl -p
+looks like ipw4 forwarding doesn't save after reload, so need to do this:
+- echo net.ipv4.ip_forward=1 | tee -a /etc/sysctl.conf && sysctl -p
 this ansible playbook used Alpine linux vmware installation (2 vCPU, 4Gb RAM) and can be started after setup-alpine and setup-bootable script (https://wiki.alpinelinux.org/wiki/Installation#Installation_Handbook) after script was finished we have k8s node ready for using as control-pane or worker.
 Control plane node:
  - kubeadm init --pod-network-cidr=10.244.0.0/16 --node-name=$(hostname)
