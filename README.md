@@ -15,3 +15,5 @@ spec:
   externalIPs:
   - <eth0 IP>
 after configuring Ingress Controller we can use INgres for exposing resourses (dasbord, application etc) - just need create kind: Ingress resourse, for example - use dashboard-ingress.yaml
+
+or we can use this command helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.service.externalIPs[0]=_PUT_HERE_EXTERNAL_IP
